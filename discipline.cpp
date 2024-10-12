@@ -6,7 +6,7 @@
 #include <list>
 #include <set>
 
-
+/////////////////////////////////////////////
 inline std::string normalDefault() {return  "\033[0m";}
 inline std::string boldDefault() {return  "\033[1m";}
 inline std::string italicDefault() {return  "\033[3m";}
@@ -44,7 +44,7 @@ inline std::string normalWhite() {return "\033[0;37m";}
 inline std::string boldWhite() {return "\033[1;37m";}
 inline std::string italicWhite() {return "\033[3;37m";}
 inline std::string boldItalicWhite() {return "\033[1;3;37m";}
-
+/////////////////////////////////////////////
 namespace impl {
     class Item {
     public:
