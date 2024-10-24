@@ -1,1 +1,3 @@
-# discipline
+
+# Discipline
+by Dawid Jakubowski (nook)
