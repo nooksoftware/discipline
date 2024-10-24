@@ -53,6 +53,10 @@ namespace globals {
     int _selected = 0;
     bool _exitOnThisFrame = false;
 
+
+    WINDOW* _prog_left_win;
+    WINDOW* _prog_right_win;
+
     enum SelectedChoice {
         PROGRAM = 0,
         SETTINGS,
@@ -135,6 +139,17 @@ void _initialize() {
         init_pair(0, COLOR_BLACK, COLOR_BLUE);
         init_pair(1, COLOR_WHITE, COLOR_BLACK);
         globals::_isRunning = true;
+    
+        //program columns
+        int height, width;
+        getmaxyx(stdscr, height, width);
+
+        int left_width = width / 2;
+        int right_width = width - left_width;
+        
+        globals::_prog_left_win = newwin(height, left_width, 0, 0);
+        globals::_prog_right_win = newwin(height, right_width, 0, left_width);
+
     }
 }
 inline bool _isMenuRowSelected(int row) {
@@ -162,20 +177,44 @@ inline void _select(int row) {
         _exit();
     }
 }
-void _start() {
-    while (globals::_isRunning) {
-        for (int row = 0; row < globals::_rows; ++row) {
-            if (_isMenuRowSelected(row)) {
-                attron(COLOR_PAIR(1));
-                mvprintw(row, 1, globals::_menuOptionsStr[row]);
-                attroff(COLOR_PAIR(1));
-            } else {
-                attron(COLOR_PAIR(2));
-                mvprintw(row, 1, globals::_menuOptionsStr[row]);
-                attroff(COLOR_PAIR(2));
-            }
+void _drawMenu() {
+    wclear(globals::_prog_left_win);
+    wclear(globals::_prog_right_win);
+
+    box(globals::_prog_left_win, 0, 0);
+    box(globals::_prog_right_win, 0, 0);
+
+    mvwprintw(globals::_prog_left_win, 1, 1, "Task 7");
+    mvwprintw(globals::_prog_left_win, 2, 1, "Task 6");
+    mvwprintw(globals::_prog_left_win, 3, 1, "Task 5");
+    mvwprintw(globals::_prog_left_win, 4, 1, "Task 4");
+    mvwprintw(globals::_prog_left_win, 5, 1, "Task 3");
+    mvwprintw(globals::_prog_left_win, 6, 1, "Task 2");
+    mvwprintw(globals::_prog_left_win, 7, 1, "Task 1");
+
+    mvwprintw(globals::_prog_right_win, 1, 1, "Text");
+
+    wrefresh(globals::_prog_left_win);
+    wrefresh(globals::_prog_right_win);
+}
+void _activityMenu() {
+    getch();
+}
+void _drawProgram() {
+    for (int row = 0; row < globals::_rows; ++row) {
+        if (_isMenuRowSelected(row)) {
+            attron(COLOR_PAIR(1));
+            mvprintw(row, 1, globals::_menuOptionsStr[row]);
+            attroff(COLOR_PAIR(1));
+        } else {
+            attron(COLOR_PAIR(2));
+            mvprintw(row, 1, globals::_menuOptionsStr[row]);
+            attroff(COLOR_PAIR(2));
         }
-        char ch = getch();
+    }
+}
+void _activityProgram() {
+    char ch = getch();
         if (ch == 's') {
             globals::_selected++;
             if (globals::_selected == 3) globals::_selected = 0;
@@ -188,10 +227,21 @@ void _start() {
         if (globals::_exitOnThisFrame) {
             globals::_isRunning = false;
         }
+}
+void _start() {
+    while (globals::_isRunning) {
+        if (globals::_selectedChoice == globals::SelectedChoice::PROGRAM) {
+            _drawMenu();
+            _activityMenu();
+        } else if (globals::_selectedChoice == globals::SelectedChoice::MENU) {
+            _drawProgram();
+            _activityProgram();
+        }
     }
-
 }
 void _release() {
+    delwin(globals::_prog_left_win);
+    delwin(globals::_prog_right_win);
     endwin();
 
 }
